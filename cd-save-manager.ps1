@@ -3,18 +3,6 @@
 #   Usage: irm "https://raw.githubusercontent.com/szicx/crimson-desert-save-manager/main/cd-save-manager.ps1" | iex
 # ============================================================
 
-Trois modifications simples — voici le script corrigé avec uniquement les parties concernées changées :
-
-1. Ligne [SELECT] Sélection... → supprimée.
-2. Le prompt et la saisie sur la même ligne → le texte est passé directement dans Read-Host au lieu d'un Write-Host séparé.
-3. Fin du script → Write-Host simple, plus de Read-Host.
-
-powershell
-# ============================================================
-#   Crimson Desert - Save Manager
-#   Usage: irm "https://raw.githubusercontent.com/TON_USER/TON_REPO/main/cd-save-manager.ps1" | iex
-# ============================================================
-
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
