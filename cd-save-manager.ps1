@@ -10,8 +10,8 @@ function Exit-Error {
     param([string]$Tag, [string]$Message)
     Write-Host ""
     Write-Host "[$Tag] $Message" -ForegroundColor Red
-    Write-Host "[$Tag] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
-    Read-Host ""
+    Write-Host "[$Tag] Appuyez sur Entrée pour fermer." -ForegroundColor DarkGray
+    [void][System.Console]::ReadLine()
     exit 1
 }
 
