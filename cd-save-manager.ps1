@@ -3,6 +3,8 @@
 #   Usage: irm "https://raw.githubusercontent.com/szicx/crimson-desert-save-manager/main/cd-save-manager.ps1" | iex
 # ============================================================
 
+& {
+
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
@@ -11,8 +13,8 @@ function Exit-Error {
     Write-Host ""
     Write-Host "[$Tag] $Message" -ForegroundColor Red
     Write-Host "[$Tag] Appuyez sur Entrée pour fermer." -ForegroundColor DarkGray
-    $null = $Host.UI.ReadLine()
-    exit 1
+    Read-Host ""
+    return
 }
 
 $SavePath = "$env:LOCALAPPDATA\Pearl Abyss\CD\save"
@@ -28,6 +30,7 @@ Write-Host "[INIT] Vérification du dossier de sauvegardes..." -ForegroundColor 
 
 if (-not (Test-Path $SavePath)) {
     Exit-Error "INIT" "Erreur : dossier introuvable : $SavePath"
+    return
 }
 
 Write-Host "[INIT] Chemin : $SavePath" -ForegroundColor DarkGray
@@ -42,6 +45,7 @@ $folders = Get-ChildItem -Path $SavePath -Directory |
 
 if ($folders.Count -eq 0) {
     Exit-Error "SCAN" "Aucun dossier de sauvegarde trouvé."
+    return
 }
 
 $folderInfo = @()
@@ -99,7 +103,7 @@ if ($autoMode) {
     if ($confirm -notmatch '^[OoYy]') {
         Write-Host "[SELECT] Opération annulée." -ForegroundColor Yellow
         Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
-        exit
+        return
     }
 
 } else {
@@ -111,9 +115,11 @@ if ($autoMode) {
 
     if (-not $source -or -not $dest) {
         Exit-Error "SELECT" "Sélection invalide, veuillez relancer le script."
+        return
     }
     if ($source.Name -eq $dest.Name) {
         Exit-Error "SELECT" "La source et la destination sont identiques."
+        return
     }
 
     Write-Host ""
@@ -121,7 +127,7 @@ if ($autoMode) {
     if ($confirm -notmatch '^[OoYy]') {
         Write-Host "[SELECT] Opération annulée." -ForegroundColor Yellow
         Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
-        exit
+        return
     }
 }
 
@@ -170,3 +176,5 @@ if ($errors -eq 0) {
 
 Write-Host "[DONE] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
 Write-Host ""
+
+}
