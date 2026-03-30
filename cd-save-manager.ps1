@@ -12,8 +12,6 @@ function Exit-Error {
     param([string]$Tag, [string]$Message)
     Write-Host ""
     Write-Host "[$Tag] $Message" -ForegroundColor Red
-    Write-Host "[$Tag] Appuyez sur une touche pour fermer." -ForegroundColor DarkGray
-    [void][System.Console]::ReadKey($true)
     return
 }
 
