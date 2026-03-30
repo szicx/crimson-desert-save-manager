@@ -6,6 +6,15 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
+function Exit-Error {
+    param([string]$Tag, [string]$Message)
+    Write-Host ""
+    Write-Host "[$Tag] $Message" -ForegroundColor Red
+    Write-Host "[$Tag] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
+    Read-Host ""
+    exit 1
+}
+
 $SavePath = "$env:LOCALAPPDATA\Pearl Abyss\CD\save"
 
 Write-Host ""
@@ -18,9 +27,7 @@ Write-Host ""
 Write-Host "[INIT] Vérification du dossier de sauvegardes..." -ForegroundColor DarkGray
 
 if (-not (Test-Path $SavePath)) {
-    Write-Host "[INIT] Erreur : dossier introuvable : $SavePath" -ForegroundColor Red
-    Write-Host "[INIT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
-    exit 1
+    Exit-Error "INIT" "Erreur : dossier introuvable : $SavePath"
 }
 
 Write-Host "[INIT] Chemin : $SavePath" -ForegroundColor DarkGray
@@ -34,9 +41,7 @@ $folders = Get-ChildItem -Path $SavePath -Directory |
            Sort-Object LastWriteTime
 
 if ($folders.Count -eq 0) {
-    Write-Host "[SCAN] Aucun dossier de sauvegarde trouvé." -ForegroundColor Red
-    Write-Host "[SCAN] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
-    exit
+    Exit-Error "SCAN" "Aucun dossier de sauvegarde trouvé."
 }
 
 $folderInfo = @()
@@ -98,21 +103,17 @@ if ($autoMode) {
     }
 
 } else {
-    $srcInput = Read-Host "[SELECT] Sélectionnez la SOURCE (numéro)"
+    $srcInput = Read-Host "[SELECT] Sélectionnez la SOURCE (contenant la sauvegarde à copier)"
     $source   = $folderInfo | Where-Object { $_.Index -eq [int]$srcInput }
 
-    $dstInput = Read-Host "[SELECT] Sélectionnez la DESTINATION (numéro)"
+    $dstInput = Read-Host "[SELECT] Sélectionnez la DESTINATION (dossier vide le plus récent)"
     $dest     = $folderInfo | Where-Object { $_.Index -eq [int]$dstInput }
 
     if (-not $source -or -not $dest) {
-        Write-Host "[SELECT] Erreur : sélection invalide." -ForegroundColor Red
-        Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
-        exit 1
+        Exit-Error "SELECT" "Sélection invalide, veuillez relancer le script."
     }
     if ($source.Name -eq $dest.Name) {
-        Write-Host "[SELECT] Erreur : la source et la destination sont identiques." -ForegroundColor Red
-        Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
-        exit 1
+        Exit-Error "SELECT" "La source et la destination sont identiques."
     }
 
     Write-Host ""
