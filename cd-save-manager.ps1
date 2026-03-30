@@ -11,7 +11,7 @@ function Exit-Error {
     Write-Host ""
     Write-Host "[$Tag] $Message" -ForegroundColor Red
     Write-Host "[$Tag] Appuyez sur Entrée pour fermer." -ForegroundColor DarkGray
-    [void][System.Console]::ReadLine()
+    $null = $Host.UI.ReadLine()
     exit 1
 }
 
