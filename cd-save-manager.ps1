@@ -3,6 +3,18 @@
 #   Usage: irm "https://raw.githubusercontent.com/szicx/crimson-desert-save-manager/main/cd-save-manager.ps1" | iex
 # ============================================================
 
+Trois modifications simples — voici le script corrigé avec uniquement les parties concernées changées :
+
+1. Ligne [SELECT] Sélection... → supprimée.
+2. Le prompt et la saisie sur la même ligne → le texte est passé directement dans Read-Host au lieu d'un Write-Host séparé.
+3. Fin du script → Write-Host simple, plus de Read-Host.
+
+powershell
+# ============================================================
+#   Crimson Desert - Save Manager
+#   Usage: irm "https://raw.githubusercontent.com/TON_USER/TON_REPO/main/cd-save-manager.ps1" | iex
+# ============================================================
+
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
@@ -19,7 +31,7 @@ Write-Host "[INIT] Vérification du dossier de sauvegardes..." -ForegroundColor 
 
 if (-not (Test-Path $SavePath)) {
     Write-Host "[INIT] Erreur : dossier introuvable : $SavePath" -ForegroundColor Red
-    Read-Host "Appuyez sur Entrée pour quitter"
+    Write-Host "[INIT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
     exit 1
 }
 
@@ -35,7 +47,7 @@ $folders = Get-ChildItem -Path $SavePath -Directory |
 
 if ($folders.Count -eq 0) {
     Write-Host "[SCAN] Aucun dossier de sauvegarde trouvé." -ForegroundColor Red
-    Read-Host "Appuyez sur Entrée pour quitter"
+    Write-Host "[SCAN] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
     exit
 }
 
@@ -78,8 +90,6 @@ foreach ($fi in $folderInfo) {
 Write-Host ""
 
 # ─── ÉTAPE 4 : Sélection ───────────────────────────────────
-Write-Host "[SELECT] Sélection de la source et de la destination..." -ForegroundColor Yellow
-
 $sources = $folderInfo | Where-Object { $_.HasSaves }
 $empties = $folderInfo | Where-Object { -not $_.HasSaves } | Sort-Object LastWrite -Descending
 $autoMode = ($sources.Count -eq 1 -and $empties.Count -ge 1)
@@ -95,27 +105,25 @@ if ($autoMode) {
     $confirm = Read-Host "[SELECT] Copier vers '$($dest.Name)' ? (O/N)"
     if ($confirm -notmatch '^[OoYy]') {
         Write-Host "[SELECT] Opération annulée." -ForegroundColor Yellow
-        Read-Host "Appuyez sur Entrée pour quitter"
+        Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
         exit
     }
 
 } else {
-    Write-Host "[SELECT] Sélectionnez le dossier SOURCE (celui qui contient vos sauvegardes) :" -ForegroundColor Cyan
-    $srcInput = Read-Host "         Numéro"
+    $srcInput = Read-Host "[SELECT] Sélectionnez la SOURCE (numéro)"
     $source   = $folderInfo | Where-Object { $_.Index -eq [int]$srcInput }
 
-    Write-Host "[SELECT] Sélectionnez le dossier DESTINATION (le nouveau dossier vide) :" -ForegroundColor Cyan
-    $dstInput = Read-Host "         Numéro"
+    $dstInput = Read-Host "[SELECT] Sélectionnez la DESTINATION (numéro)"
     $dest     = $folderInfo | Where-Object { $_.Index -eq [int]$dstInput }
 
     if (-not $source -or -not $dest) {
         Write-Host "[SELECT] Erreur : sélection invalide." -ForegroundColor Red
-        Read-Host "Appuyez sur Entrée pour quitter"
+        Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
         exit 1
     }
     if ($source.Name -eq $dest.Name) {
         Write-Host "[SELECT] Erreur : la source et la destination sont identiques." -ForegroundColor Red
-        Read-Host "Appuyez sur Entrée pour quitter"
+        Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
         exit 1
     }
 
@@ -123,7 +131,7 @@ if ($autoMode) {
     $confirm = Read-Host "[SELECT] Copier '$($source.Name)' vers '$($dest.Name)' ? (O/N)"
     if ($confirm -notmatch '^[OoYy]') {
         Write-Host "[SELECT] Opération annulée." -ForegroundColor Yellow
-        Read-Host "Appuyez sur Entrée pour quitter"
+        Write-Host "[SELECT] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
         exit
     }
 }
@@ -171,5 +179,5 @@ if ($errors -eq 0) {
     Write-Host "[DONE] Terminé avec $errors erreur(s). $copied élément(s) copié(s)." -ForegroundColor Yellow
 }
 
+Write-Host "[DONE] Vous pouvez fermer cette fenêtre." -ForegroundColor DarkGray
 Write-Host ""
-Read-Host "Appuyez sur Entrée pour quitter"
